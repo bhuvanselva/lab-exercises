@@ -1,161 +1,553 @@
-##AIM:
-
-To write a C program to implement the Playfair Substitution technique.
-
-##DESCRIPTION:
-
-The Playfair cipher starts with creating a key table. The key table is a 5×5 grid of letters that will act as the key for encrypting your plaintext. Each of the 25 letters must be unique and one letter of the alphabet is omitted from the table (as there are 25 spots and 26 letters in the alphabet).
-
-To encrypt a message, one would break the message into digrams (groups of 2 letters) such that, for example, "HelloWorld" becomes "HE LL OW OR LD", and map them out on the key table. The two letters of the diagram are considered as the opposite corners of a rectangle in the key table. Note the relative position of the corners of this rectangle. Then apply the following 4 rules, in order, to each pair of letters in the plaintext:
-
-1.If both letters are the same (or only one letter is left), add an "X" after the first letter.
-
-2.If the letters appear on the same row of your table, replace them with the letters to their immediate right respectively.
-
-3.If the letters appear on the same column of your table, replace them with the letters immediately below respectively.
-
-4.If the letters are not on the same row or column, replace them with the letters on the same row respectively but at the other pair of corners of the rectangle defined by the original pair.
-
-##EXAMPLE:
-
-image
-
-##ALGORITHM:
-
-STEP-1: Read the plain text from the user.
-
-STEP-2: Read the keyword from the user.
-
-STEP-3: Arrange the keyword without duplicates in a 5*5 matrix in the row order and fill the remaining cells with missed out letters in alphabetical order. Note that ‘i’ and ‘j’ takes the same cell.
-
-STEP-4: Group the plain text in pairs and match the corresponding corner letters by forming a rectangular grid.
-
-STEP-5: Display the obtained cipher text.
-
-##PROGRAM:
-
-#include<stdio.h>
-#include<string.h>
-#include<ctype.h>
-#define MX 5
-
-void playfair(char ch1, char ch2, char key[MX][MX], FILE *out) {
-    int i, j, w, x, y, z;
-
-    for (i = 0; i < MX; i++) {
-        for (j = 0; j < MX; j++) {
-            if (ch1 == key[i][j]) {
-                w = i;
-                x = j;
-            } else if (ch2 == key[i][j]) {
-                y = i;
-                z = j;
-            }
-        }
-    }
-
-    if (x == z) {
-        x = (x + 1) % 5;
-        z = (z + 1) % 5;
-        printf("%c%c", key[w][x], key[y][z]);
-        fprintf(out, "%c%c", key[w][x], key[y][z]);
-    } else {
-        w = (w + 1) % 5;
-        y = (y + 1) % 5;
-        printf("%c%c", key[w][x], key[y][z]);
-        fprintf(out, "%c%c", key[w][x], key[y][z]);
-        printf("%c%c", key[w][z], key[y][x]);
-        fprintf(out, "%c%c", key[w][z], key[y][x]);
-    }
-}
+# Caesar Cipher
+```
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
 
 int main() {
-    int i, j, k = 0, l, m = 0, n;
-    char key[MX][MX], keyminus[25], keystr[10], str[25] = {0};
-    char alpa[26] = {'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'};
-    FILE *out;
+    char plain[10], cipher[10];
+    int key, i, length;
+    
+    printf("Enter the plain text: ");
+    scanf("%s", plain);
+    printf("Enter the key value: ");
+    scanf("%d", &key);
 
-    printf("\nEnter key:");
-    fgets(keystr, sizeof(keystr), stdin);
-    printf("\nEnter the plain text:");
-    fgets(str, sizeof(str), stdin);
+    printf("\nPLAIN TEXT: %s\n", plain);
 
-    n = strlen(keystr);
-    for (i = 0; i < n; i++) {
-        if (keystr[i] == 'j' || keystr[i] == 'J')
-            keystr[i] = 'I';
-        keystr[i] = toupper(keystr[i]);
+    length = strlen(plain);
+
+    printf("\nENCRYPTED TEXT: ");
+    for (i = 0; i < length; i++) {
+        cipher[i] = plain[i] + key;
+        if (isupper(plain[i]) && (cipher[i] > 'Z'))
+            cipher[i] -= 26;
+        if (islower(plain[i]) && (cipher[i] > 'z'))
+            cipher[i] -= 26;
+        printf("%c", cipher[i]);
     }
 
-    for (i = 0; i < strlen(str); i++) {
-        if (str[i] == 'j' || str[i] == 'J')
-            str[i] = 'I';
-        str[i] = toupper(str[i]);
+    printf("\n\nAFTER DECRYPTION: ");
+    for (i = 0; i < length; i++) {
+        plain[i] = cipher[i] - key;
+        if (isupper(cipher[i]) && (plain[i] < 'A'))
+            plain[i] += 26;
+        if (islower(cipher[i]) && (plain[i] < 'a'))
+            plain[i] += 26;
+        printf("%c", plain[i]);
     }
 
-    j = 0;
-    for (i = 0; i < 26; i++) {
-        for (k = 0; k < n; k++) {
-            if (keystr[k] == alpa[i])
-                break;
-            else if (alpa[i] == 'J')
-                break;
+    printf("\n");
+
+    return 0;
+}
+```
+# Output:
+![image](https://github.com/gkausalya232/lab-exercises/assets/133086820/7e343797-46d9-4029-931b-0d9f307d32d7)
+
+# Hill Cipher
+```
+#include<stdio.h>
+#include<string.h>
+
+int main() {
+    unsigned int a[3][3] = {{6, 24, 1}, {13, 16, 10}, {20, 17, 15}};
+    unsigned int b[3][3] = {{8, 5, 10}, {21, 8, 21}, {21, 12, 8}};
+    int i, j, t = 0;
+    unsigned int c[20], d[20];
+    char msg[20];
+
+    printf("Enter plain text: ");
+    scanf("%s", msg);
+
+    for(i = 0; i < strlen(msg); i++) { 
+        c[i] = msg[i] - 65;
+        printf("%d ", c[i]);
+    }
+
+    for(i = 0; i < 3; i++) { 
+        t = 0;
+        for(j = 0; j < 3; j++) {
+            t += (a[i][j] * c[j]);
         }
-        if (k == n) {
-            keyminus[j] = alpa[i];
-            j++;
+        d[i] = t % 26;
+    }
+
+    printf("\nEncrypted Cipher Text:");
+    for(i = 0; i < 3; i++)
+        printf(" %c", d[i] + 65);
+
+    for(i = 0; i < 3; i++) {
+        t = 0;
+        for(j = 0; j < 3; j++) {
+            t += (b[i][j] * d[j]);
         }
+        c[i] = t % 26;
     }
 
-    k = 0;
-    for (i = 0; i < MX; i++) {
-        for (j = 0; j < MX; j++) {
-            if (k < n)
-                key[i][j] = keystr[k++];
-            else
-                key[i][j] = keyminus[m++];
-            printf("%c ", key[i][j]);
-        }
-        printf("\n");
+    printf("\nDecrypted Cipher Text:");
+    for(i = 0; i < 3; i++)
+        printf(" %c", c[i] + 65);
+
+    printf("\n");
+    return 0;
+}
+```
+# Output:
+![image](https://github.com/gkausalya232/lab-exercises/assets/133086820/839889f2-e094-4a82-8991-8c5751a592a5)
+
+# Vigenere Cipher
+```
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+
+void encipher();
+void decipher();
+
+int main() {
+    int choice;
+
+    while (1) {
+        printf("\n1. Encrypt Text");
+        printf("\t2. Decrypt Text");
+        printf("\t3. Exit");
+        printf("\n\nEnter Your Choice: ");
+        scanf("%d", &choice);
+
+        if (choice == 3)
+            break;
+        else if (choice == 1)
+            encipher();
+        else if (choice == 2)
+            decipher();
+        else
+            printf("Please Enter a Valid Option.");
     }
 
-    printf("\nEntered text: %s\nCipher Text: ", str);
-    out = fopen("cipher.txt", "a+");
-    if (out == NULL) {
-        printf("File Corrupted.");
-        return 1;
-    }
-
-    for (i = 0; i < strlen(str); i++) {
-        if (str[i] == 'J')
-            str[i] = 'I';
-        if (str[i + 1] == '\0')
-            playfair(str[i], 'X', key, out);
-        else {
-            if (str[i + 1] == 'J')
-                str[i + 1] = 'I';
-            if (str[i] == str[i + 1])
-                playfair(str[i], 'X', key, out);
-            else {
-                playfair(str[i], str[i + 1], key, out);
-                i++;
-            }
-        }
-    }
-
-    fclose(out);
     return 0;
 }
 
-##OUTPUT:
+void encipher() {
+    unsigned int i, j;
+    char input[50], key[10];
+    printf("\n\nEnter Plain Text: ");
+    scanf("%s", input);
+    printf("Enter Key Value: ");
+    scanf("%s", key);
+    printf("Resultant Cipher Text: ");
 
-![image](https://github.com/bhuvanselva/lab-exercises/assets/119847426/fe7adcf4-988e-44bc-be43-9f5124f8695c)
+    for (i = 0, j = 0; i < strlen(input); i++, j++) {
+        if (j >= strlen(key)) {
+            j = 0;
+        }
+        printf("%c", 'A' + (((toupper(input[i]) - 'A') + (toupper(key[j]) - 'A')) % 26));
+    }
+
+    printf("\n");
+}
+
+void decipher() {
+    unsigned int i, j;
+    char input[50], key[10];
+    int value;
+
+    printf("\n\nEnter Cipher Text: ");
+    scanf("%s", input);
+    printf("Enter the Key Value: ");
+    scanf("%s", key);
+
+    for (i = 0, j = 0; i < strlen(input); i++, j++) {
+        if (j >= strlen(key)) {
+            j = 0;
+        }
+        value = (toupper(input[i]) - 'A') - (toupper(key[j]) - 'A');
+        if (value < 0) {
+            value += 26;
+        }
+        printf("%c", 'A' + (value % 26));
+    }
+
+    printf("\n");
+}
+```
+# Output:
+![image](https://github.com/gkausalya232/lab-exercises/assets/133086820/ebea4d67-75e6-4db7-9530-7837a5e451c0)
+
+# Rail Fence
+```
+#include <stdio.h>
+#include <string.h>
+
+int main() {
+    int i, j, k, l;
+    char a[20], c[20], d[20];
+    
+    printf("\n\t\t RAIL FENCE TECHNIQUE");
+    printf("\n\nEnter the input string : ");
+    fgets(a, sizeof(a), stdin);
+    a[strcspn(a, "\n")] = '\0'; // Remove newline character
+    l = strlen(a);
+    
+    /* Ciphering */
+    for (i = 0, j = 0; i < l; i += 2) {
+        c[j++] = a[i];
+    }
+    for (i = 1; i < l; i += 2) {
+        c[j++] = a[i];
+    }
+    c[j] = '\0';
+    
+    printf("\nCipher text after applying rail fence :");
+    printf("\n%s", c);
+    
+    /* Deciphering */
+    if (l % 2 == 0)
+        k = l / 2;
+    else
+        k = (l / 2) + 1;
+    
+    for (i = 0, j = 0; i < k; i++) {
+        d[j] = c[i];
+        j += 2;
+    }
+    for (i = k, j = 1; i < l; i++) {
+        d[j] = c[i];
+        j += 2;
+    }
+    d[l] = '\0';
+    
+    printf("\nText after decryption : ");
+    printf("%s", d);
+    
+    return 0;
+}
+```
+# Output:
+![image](https://github.com/gkausalya232/lab-exercises/assets/133086820/c3f4482d-b682-4775-a62e-9eb211f2f492)
 
 
-image
+# RSA
+```
+#include<stdio.h>
+#include<stdlib.h>
+#include<math.h>
+#include<string.h>
 
-##RESULT:
+long int p, q, n, t, flag, e[100], d[100], temp[100], j, m[100], en[100], i;
+char msg[100];
 
-Thus the Playfair cipher substitution technique had been implemented successfully.
+int prime(long int);
+void ce();
+long int cd(long int);
+void encrypt();
+void decrypt();
+
+void main() {
+    printf("\nENTER FIRST PRIME NUMBER\n");
+    scanf("%ld", &p);
+    flag = prime(p);
+    if(flag == 0) {
+        printf("\nWRONG INPUT\n");
+        exit(0);
+    }
+    printf("\nENTER ANOTHER PRIME NUMBER\n");
+    scanf("%ld", &q);
+    flag = prime(q);
+    if(flag == 0 || p == q) {
+        printf("\nWRONG INPUT\n");
+        exit(0);
+    }
+    printf("\nENTER MESSAGE\n");
+    fflush(stdin);
+    scanf("%s", msg);
+    for(i = 0; msg[i] != '\0'; i++)
+        m[i] = msg[i];
+    n = p * q;
+    t = (p - 1) * (q - 1);
+    ce();
+    printf("\nPOSSIBLE VALUES OF e AND d ARE\n");
+    for(i = 0; i < j - 1; i++)
+        printf("\n%ld\t%ld", e[i], d[i]);
+    encrypt();
+    decrypt();
+}
+
+int prime(long int pr) {
+    int i;
+    j = sqrt(pr);
+    for(i = 2; i <= j; i++) {
+        if(pr % i == 0)
+            return 0;
+    }
+    return 1;
+}
+
+void ce() {
+    int k;
+    k = 0;
+    for(i = 2; i < t; i++) {
+        if(t % i == 0)
+            continue;
+        flag = prime(i);
+        if(flag == 1 && i != p && i != q) {
+            e[k] = i;
+            flag = cd(e[k]);
+            if(flag > 0) {
+                d[k] = flag;
+                k++;
+            }
+            if(k == 99)
+                break;
+        }
+    }
+}
+
+long int cd(long int x) {
+    long int k = 1;
+    while(1) {
+        k = k + t;
+        if(k % x == 0)
+            return(k / x);
+    }
+}
+
+void encrypt() {
+    long int pt, ct, key = e[0], k, len;
+    i = 0;
+    len = strlen(msg);
+    while(i != len) {
+        pt = m[i];
+        pt = pt - 96;
+        k = 1;
+        for(j = 0; j < key; j++) {
+            k = k * pt;
+            k = k % n;
+        }
+        temp[i] = k;
+        ct = k + 96;
+        en[i] = ct;
+        i++;
+    }
+    en[i] = -1;
+    printf("\nTHE ENCRYPTED MESSAGE IS\n");
+    for(i = 0; en[i] != -1; i++)
+        printf("%c", en[i]);
+}
+
+void decrypt() {
+    long int pt, ct, key = d[0], k;
+    i = 0;
+    while(en[i] != -1) {
+        ct = temp[i];
+        k = 1;
+        for(j = 0; j < key; j++) {
+            k = k * ct;
+            k = k % n;
+        }
+        pt = k + 96;
+        m[i] = pt;
+        i++;
+    }
+    m[i] = -1;
+    printf("\nTHE DECRYPTED MESSAGE IS\n");
+    for(i = 0; m[i] != -1; i++)
+        printf("%c", m[i]);
+}
+```
+# Output:
+![image](https://github.com/gkausalya232/lab-exercises/assets/133086820/37eb00db-bd4f-47be-938a-57c061b1c555)
+
+# MD5
+```
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
+
+typedef union {
+    unsigned w;
+    unsigned char b[4];
+} MD5union;
+
+typedef unsigned DigestArray[4];
+
+unsigned func0(unsigned abcd[]) {
+    return (abcd[1] & abcd[2]) | (~abcd[1] & abcd[3]);
+}
+
+unsigned func1(unsigned abcd[]) {
+    return (abcd[3] & abcd[1]) | (~abcd[3] & abcd[2]);
+}
+
+unsigned func2(unsigned abcd[]) {
+    return abcd[1] ^ abcd[2] ^ abcd[3];
+}
+
+unsigned func3(unsigned abcd[]) {
+    return abcd[2] ^ (abcd[1] | ~abcd[3]);
+}
+
+typedef unsigned (*DgstFctn)(unsigned a[]);
+
+unsigned *calctable(unsigned *k) {
+    double s, pwr;
+    int i;
+    pwr = pow(2, 32);
+    for (i = 0; i < 64; i++) {
+        s = fabs(sin(1 + i));
+        k[i] = (unsigned)(s * pwr);
+    }
+    return k;
+}
+
+unsigned rol(unsigned r, short N) {
+    unsigned mask1 = (1 << N) - 1;
+    return ((r >> (32 - N)) & mask1) | ((r << N) & ~mask1);
+}
+
+unsigned *md5(const char *msg, int mlen) {
+    static DigestArray h0 = {0x67452301, 0xEFCDAB89, 0x98BADCFE, 0x10325476};
+    static DgstFctn ff[] = {&func0, &func1, &func2, &func3};
+    static short M[] = {1, 5, 3, 7};
+    static short O[] = {0, 1, 5, 0};
+    static short rot0[] = {7, 12, 17, 22};
+    static short rot1[] = {5, 9, 14, 20};
+    static short rot2[] = {4, 11, 16, 23};
+    static short rot3[] = {6, 10, 15, 21};
+    static short *rots[] = {rot0, rot1, rot2, rot3};
+    static unsigned kspace[64];
+    static unsigned *k = NULL;
+    static DigestArray h;
+    DigestArray abcd;
+    DgstFctn fctn;
+    short m, o, g;
+    unsigned f;
+    short *rotn;
+    union {
+        unsigned w[16];
+        char b[64];
+    } mm;
+
+    int os = 0;
+    int grp, grps, q, p;
+    unsigned char *msg2;
+    if (k == NULL) k = calctable(kspace);
+
+    for (q = 0; q < 4; q++) h[q] = h0[q]; // initialize
+    grps = 1 + (mlen + 8) / 64;
+    msg2 = malloc(64 * grps);
+    memcpy(msg2, msg, mlen);
+    msg2[mlen] = (unsigned char)0x80;
+    q = mlen + 1;
+    while (q < 64 * grps) {
+        msg2[q] = 0;
+        q++;
+    }
+    {
+        MD5union u;
+        u.w = 8 * mlen;
+        q -= 8;
+        memcpy(msg2 + q, &u.w, 4);
+    }
+
+    for (grp = 0; grp < grps; grp++) {
+        memcpy(mm.b, msg2 + os, 64);
+
+        for (q = 0; q < 4; q++) abcd[q] = h[q];
+        for (p = 0; p < 4; p++) {
+            fctn = ff[p];
+            rotn = rots[p];
+            m = M[p];
+            o = O[p];
+            for (q = 0; q < 16; q++) {
+                g = (m * q + o) % 16;
+                f = abcd[1] + rol(abcd[0] + fctn(abcd) + k[q + 16 * p] + mm.w[g], rotn[q % 4]);
+                abcd[0] = abcd[3];
+                abcd[3] = abcd[2];
+                abcd[2] = abcd[1];
+                abcd[1] = f;
+            }
+        }
+        for (p = 0; p < 4; p++) h[p] += abcd[p];
+        os += 64;
+    }
+    return h;
+}
+
+int main() {
+    int j, k;
+    const char *msg = "The quick brown fox jumps over the lazy dog";
+    unsigned *d = md5(msg, strlen(msg));
+    MD5union u;
+
+    printf("\t MD5 ENCRYPTION ALGORITHM IN C \n\n");
+    printf("Input String to be Encrypted using MD5 : \n\t%s\n", msg);
+    printf("\n\nThe MD5 code for input string is: \n");
+    printf("\t= 0x");
+    for (j = 0; j < 4; j++) {
+        u.w = d[j];
+        for (k = 0; k < 4; k++) printf("%02x", u.b[k]);
+    }
+    printf("\n\n\t MD5 Encryption Successfully Completed!!!\n\n");
+
+    return 0;
+}
+```
+# Output
+![image](https://github.com/gkausalya232/lab-exercises/assets/133086820/0917b956-e2e7-4283-98af-46ab871e608a)
+
+# SHA 1
+```
+import java.security.*;
+
+public class SHA1 {
+    public static void main(String[] args) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA1");
+            System.out.println("Message digest object info:");
+            System.out.println(" Algorithm = " + md.getAlgorithm());
+            System.out.println(" Provider = " + md.getProvider());
+            System.out.println(" ToString = " + md.toString());
+
+            String input = "";
+            md.update(input.getBytes());
+            byte[] output = md.digest();
+            System.out.println("\nSHA1(\"" + input + "\") = " + bytesToHex(output));
+
+            input = "abc";
+            md.update(input.getBytes());
+            output = md.digest();
+            System.out.println("\nSHA1(\"" + input + "\") = " + bytesToHex(output));
+
+            input = "abcdefghijklmnopqrstuvwxyz";
+            md.update(input.getBytes());
+            output = md.digest();
+            System.out.println("\nSHA1(\"" + input + "\") = " + bytesToHex(output));
+            System.out.println();
+        } catch (NoSuchAlgorithmException e) {
+            System.out.println("Exception: " + e);
+        }
+    }
+
+    public static String bytesToHex(byte[] bytes) {
+        char[] hexDigits = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+        StringBuilder hexString = new StringBuilder();
+        for (byte b : bytes) {
+            hexString.append(hexDigits[(b >> 4) & 0x0f]);
+            hexString.append(hexDigits[b & 0x0f]);
+        }
+        return hexString.toString();
+    }
+}
+```
+# Output
+![image](https://github.com/gkausalya232/lab-exercises/assets/133086820/ea220820-b362-4ab7-a177-16c22cf9349a)
 
 
+
+
+
+ 
+          
+           
