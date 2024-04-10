@@ -64,8 +64,7 @@ void main()
 ```
 ##OUTPUT:
 ```
-![image](https://github.com/bhuvanselva/lab-exercises/assets/119847426/61bfa730-082c-4277-88ed-e2c4d29ce34c)
-
+![Uploading image.png…]()
 
 ```
 ##RESULT:
