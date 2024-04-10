@@ -1,3 +1,7 @@
+
+
+1.IMPLEMENTATION OF CAESAR CIPHER:
+
 # Caesar Cipher
 ```
 #include <stdio.h>
@@ -44,6 +48,8 @@ int main() {
 ```
 # Output:
 ![image](https://github.com/gkausalya232/lab-exercises/assets/133086820/7e343797-46d9-4029-931b-0d9f307d32d7)
+
+2.IMPLEMENTATION OF HILL CIPHER
 
 # Hill Cipher
 ```
@@ -95,6 +101,8 @@ int main() {
 ```
 # Output:
 ![image](https://github.com/gkausalya232/lab-exercises/assets/133086820/839889f2-e094-4a82-8991-8c5751a592a5)
+
+3.IMPLEMENTATION OF VIGENERE CIPHER
 
 # Vigenere Cipher
 ```
@@ -174,6 +182,8 @@ void decipher() {
 # Output:
 ![image](https://github.com/gkausalya232/lab-exercises/assets/133086820/ebea4d67-75e6-4db7-9530-7837a5e451c0)
 
+4.IMPLEMENTAION OF RAIL FENCE:
+
 # Rail Fence
 ```
 #include <stdio.h>
@@ -226,6 +236,7 @@ int main() {
 # Output:
 ![image](https://github.com/gkausalya232/lab-exercises/assets/133086820/c3f4482d-b682-4775-a62e-9eb211f2f492)
 
+5.IMPLEMETATION OF RSA:
 
 # RSA
 ```
@@ -357,6 +368,8 @@ void decrypt() {
 ```
 # Output:
 ![image](https://github.com/gkausalya232/lab-exercises/assets/133086820/37eb00db-bd4f-47be-938a-57c061b1c555)
+
+6.IMPLEMENTATION OF MR5:
 
 # MD5
 ```
@@ -496,6 +509,8 @@ int main() {
 ```
 # Output
 ![image](https://github.com/gkausalya232/lab-exercises/assets/133086820/0917b956-e2e7-4283-98af-46ab871e608a)
+
+7.IMPLEMENTATION OF SHA-1:
 
 # SHA 1
 ```
