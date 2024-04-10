@@ -148,8 +148,10 @@ int main() {
 }
 
 ##OUTPUT:
+```
 ![image](https://github.com/bhuvanselva/lab-exercises/assets/119847426/fe7adcf4-988e-44bc-be43-9f5124f8695c)
 
+```
 
 image
 
